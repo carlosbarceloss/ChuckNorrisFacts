@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         
-        let controller = GameViewController()
+        let controller = FactsViewController()
         window.rootViewController = controller
         
         self.window = window
