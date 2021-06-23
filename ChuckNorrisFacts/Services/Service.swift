@@ -16,7 +16,7 @@ class Service {
             let session = URLSession.shared.dataTask(with: urlRequest) { data, urlResponse, error in
                 if let error = error {
                     // erro na request
-                    print(error)
+                    print(error.localizedDescription)
                 }
                 
                 if let response = urlResponse as? HTTPURLResponse, let data = data {
@@ -33,7 +33,6 @@ class Service {
                 }
                 
             }
-            
             session.resume()
         } catch {
             

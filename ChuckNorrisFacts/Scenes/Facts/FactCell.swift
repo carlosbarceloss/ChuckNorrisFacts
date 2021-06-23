@@ -8,17 +8,58 @@
 import UIKit
 
 class FactCell: UITableViewCell {
-    private var factLabel = UILabel()
-    private var categoryLabel = UILabel()
+    
+    weak var delegate: FactsViewControllerDelegate?
     private var factUrl: URL?
-    private var hStack: UIStackView!
-    private var vStack: UIStackView!
-    weak var shareDelegate: ShareDelegate!
+    
+    private var factLabel = UILabel()
+    private var categoryLabel: UILabel = {
+        let lbl = UILabel()
+        lbl.backgroundColor = .systemBlue
+        lbl.numberOfLines = 1
+        lbl.textColor = .white
+        lbl.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        return lbl
+    }()
+    
+    private var hStack: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .horizontal
+        sv.distribution = .equalSpacing
+        sv.alignment = .center
+        return sv
+    }()
+    
+    private var vStack: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .vertical
+        sv.distribution = .fill
+        sv.spacing = 10
+        sv.translatesAutoresizingMaskIntoConstraints = false
+        return sv
+    }()
+    
+    private let factView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .placeholderText
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.gray.cgColor
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
     
     override func awakeFromNib() {
         super.awakeFromNib()
+    }
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: .default, reuseIdentifier: "Fact")
         setupView()
-        shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func setupCell(fact: Fact) {
@@ -34,19 +75,12 @@ class FactCell: UITableViewCell {
 
         factUrl = URL(string: fact.url)
         
-        
         if fact.value.utf16.count > 80 {
             labelSizeShouldBe(22)
         } else {
             labelSizeShouldBe(32)
         }
     }
-    
-    private let factView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
     
     let shareButton: UIButton = {
         let button = UIButton()
@@ -58,7 +92,7 @@ class FactCell: UITableViewCell {
     }()
     
     @objc private func shareButtonTapped(_ sender: UIButton) {
-        shareDelegate.shareFact(url: factUrl)
+        delegate?.shareFact(url: factUrl)
     }
     
     func labelSizeShouldBe(_ fontSize: CGFloat) {
@@ -68,27 +102,16 @@ class FactCell: UITableViewCell {
 
 extension FactCell: ViewCode {
     func createViewsHierarchy() {
-        addSubview(factView)
+        contentView.addSubview(factView)
         
-        vStack = UIStackView()
-        hStack = UIStackView()
         factView.addSubview(vStack)
-        
-        vStack.axis = .vertical
-        vStack.distribution = .fill
-        vStack.spacing = 10
         vStack.addArrangedSubview(factLabel)
         vStack.addArrangedSubview(hStack)
-        
-        hStack.axis = .horizontal
-        hStack.distribution = .equalSpacing
-        hStack.alignment = .center
         hStack.addArrangedSubview(categoryLabel)
         hStack.addArrangedSubview(shareButton)
     }
     
     func setupConstraints() {
-        
         NSLayoutConstraint.activate([
             factView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
             factView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
@@ -96,27 +119,17 @@ extension FactCell: ViewCode {
             
             vStack.leadingAnchor.constraint(equalTo: factView.leadingAnchor, constant: 10),
             vStack.topAnchor.constraint(equalTo: factView.topAnchor, constant: 10),
-            vStack.trailingAnchor.constraint(equalTo: factView.leadingAnchor, constant: -10),
+            vStack.trailingAnchor.constraint(equalTo: factView.trailingAnchor, constant: -10),
             vStack.bottomAnchor.constraint(equalTo: factView.bottomAnchor, constant: -10),
             
-            heightAnchor.constraint(equalTo: factView.heightAnchor, constant: 10),
+            contentView.heightAnchor.constraint(equalTo: factView.heightAnchor, constant: 10),
         ])
-
-
     }
     
     func setAdditionalConfigurations() {
-        factView.backgroundColor = .placeholderText
-        factView.layer.borderWidth = 2
-        factView.layer.borderColor = UIColor.gray.cgColor
-        
         factLabel.numberOfLines = 0
         
-        categoryLabel.backgroundColor = .systemBlue
-        categoryLabel.numberOfLines = 1
-        categoryLabel.textColor = .white
-        categoryLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        selectionStyle = .none
+        shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
     }
-    
-    
 }

@@ -7,21 +7,27 @@
 
 import UIKit
 
-protocol ShareDelegate: AnyObject {
+protocol FactsViewControllerDelegate: AnyObject {
     func shareFact(url: URL?)
+    func navigateToSearchScreen()
+    func reloadTVWithNewData(data: [Fact])
 }
 
-class FactsViewController: UITableViewController, ShareDelegate {
+class FactsViewController: UITableViewController, FactsViewControllerDelegate {
     
     var chuckNorrisFacts = [Fact]()
-    
+    var rows = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "CHUCK NORRIS FACTS"
-        tableView.separatorStyle = .none
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.register(FactCell.self, forCellReuseIdentifier: "Fact")
+        tableView.register(EmptyCell.self, forCellReuseIdentifier: "Empty")
+        
+        title = "CHUCK NORRIS FACTS"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(navigateToSearchScreen))
+        tableView.separatorStyle = .none
     }
     
     func shareFact(url: URL?) {
@@ -30,15 +36,36 @@ class FactsViewController: UITableViewController, ShareDelegate {
         present(vc, animated: true)
     }
     
+    @objc func navigateToSearchScreen() {
+        let vc = SearchViewController()
+        vc.delegate = self
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func reloadTVWithNewData(data: [Fact]) {
+        chuckNorrisFacts = data
+        tableView.reloadData()
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        chuckNorrisFacts.count
+        if !chuckNorrisFacts.isEmpty {
+            rows = chuckNorrisFacts.count
+        } else {
+            rows = 1
+        }
+        return rows
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Fact", for: indexPath) as! FactCell
-        cell.selectionStyle = .none
-        cell.shareDelegate = self
-        cell.setupCell(fact: chuckNorrisFacts[indexPath.row])
-        return cell
+        if !chuckNorrisFacts.isEmpty {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Fact", for: indexPath) as! FactCell
+            cell.delegate = self
+            cell.setupCell(fact: chuckNorrisFacts[indexPath.row])
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Empty") as! EmptyCell
+            cell.delegate = self
+            return cell
+        }
     }   
 }
