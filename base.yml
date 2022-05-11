@@ -1,0 +1,13 @@
+attributes:
+  ORGANIZATIONNAME: "Carlos Barcelos"
+
+options:
+  developmentLanguage: "pt-BR"
+  createIntermediateGroups: true
+  deploymentTarget:
+    iOS: "13.0"
+
+settings:
+  ENABLE_BITCODE: false
+  TARGETED_DEVICE_FAMILY: 1 # iPhone Only
+  SUPPORTS_MACCATALYST: false
