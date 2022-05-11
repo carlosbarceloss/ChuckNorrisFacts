@@ -1,0 +1,23 @@
+include:
+  - ./base.yml
+
+name: ChuckNorrisFacts
+
+options:
+  preGenCommand: swiftgen
+
+targets:     
+  ChuckNorrisFacts:
+    type: application
+    platform: iOS
+    deploymentTarget: "13.0"
+    sources: 
+      - ChuckNorrisFacts
+
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: co.barcelos.Carlos
+
+    preBuildScripts:
+      - script: $HOME/.mint/bin/swiftlint
+        name: Swiftlint
