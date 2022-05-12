@@ -8,7 +8,6 @@
 import UIKit
 
 class EmptyCell: UITableViewCell {
-        
     weak var delegate: FactsViewControllerDelegate?
     private var button: UIButton = {
         let btn = UIButton(type: .system)
@@ -16,21 +15,22 @@ class EmptyCell: UITableViewCell {
         btn.translatesAutoresizingMaskIntoConstraints = false
         return btn
     }()
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+
+    override init(style _: UITableViewCell.CellStyle, reuseIdentifier _: String?) {
         super.init(style: .default, reuseIdentifier: "Empty")
         setupView()
     }
-    
+
     @objc func delegateNavigation() {
         delegate?.navigateToSearchScreen()
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
@@ -39,22 +39,20 @@ extension EmptyCell: ViewCode {
     func createViewsHierarchy() {
         contentView.addSubview(button)
     }
-    
+
     func setupConstraints() {
         NSLayoutConstraint.activate([
             button.centerYAnchor.constraint(equalTo: contentView.layoutMarginsGuide.centerYAnchor),
             button.centerXAnchor.constraint(equalTo: contentView.layoutMarginsGuide.centerXAnchor),
             button.heightAnchor.constraint(equalToConstant: 50),
             button.widthAnchor.constraint(equalTo: contentView.layoutMarginsGuide.widthAnchor),
-            
+
             contentView.heightAnchor.constraint(equalTo: button.heightAnchor, constant: 10)
         ])
     }
-    
+
     func setAdditionalConfigurations() {
         button.addTarget(self, action: #selector(delegateNavigation), for: .touchUpInside)
         selectionStyle = .none
     }
-    
-    
 }

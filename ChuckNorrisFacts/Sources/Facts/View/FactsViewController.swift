@@ -14,40 +14,39 @@ protocol FactsViewControllerDelegate: AnyObject {
 }
 
 class FactsViewController: UITableViewController, FactsViewControllerDelegate {
-    
     var chuckNorrisFacts = [Fact]()
     var rows = 0
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(FactCell.self, forCellReuseIdentifier: "Fact")
         tableView.register(EmptyCell.self, forCellReuseIdentifier: "Empty")
-        
+
         title = "CHUCK NORRIS FACTS"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(navigateToSearchScreen))
         tableView.separatorStyle = .none
     }
-    
+
     func shareFact(url: URL?) {
         guard let url = url else { return }
         let vc = UIActivityViewController(activityItems: [url], applicationActivities: [])
         present(vc, animated: true)
     }
-    
+
     @objc func navigateToSearchScreen() {
         let vc = SearchViewController()
         vc.delegate = self
         navigationController?.pushViewController(vc, animated: true)
     }
-    
+
     func reloadTVWithNewData(data: [Fact]) {
         chuckNorrisFacts = data
         tableView.reloadData()
     }
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+    override func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         if !chuckNorrisFacts.isEmpty {
             rows = chuckNorrisFacts.count
         } else {
@@ -55,17 +54,19 @@ class FactsViewController: UITableViewController, FactsViewControllerDelegate {
         }
         return rows
     }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if !chuckNorrisFacts.isEmpty {
+            // swiftlint:disable:next force_cast
             let cell = tableView.dequeueReusableCell(withIdentifier: "Fact", for: indexPath) as! FactCell
             cell.delegate = self
             cell.setupCell(fact: chuckNorrisFacts[indexPath.row])
             return cell
         } else {
+            // swiftlint:disable:next force_cast
             let cell = tableView.dequeueReusableCell(withIdentifier: "Empty") as! EmptyCell
             cell.delegate = self
             return cell
         }
-    }   
+    }
 }
