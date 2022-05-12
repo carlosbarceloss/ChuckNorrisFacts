@@ -18,11 +18,11 @@ extension APIEndpoints: Endpoint {
             return "/jokes/search"
         }
     }
-    
+
     var method: String {
         return "get"
     }
-    
+
     var url: URLComponents {
         var component = URLComponents()
         component.scheme = "https"
@@ -31,5 +31,4 @@ extension APIEndpoints: Endpoint {
         component.query = "query"
         return component
     }
-    
 }
